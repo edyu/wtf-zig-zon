@@ -1,6 +1,6 @@
 # Zig Package Manager - WTF is Zon
 
-The <u>power</u> **hack** and complexity of **Package Manager** in Zig
+The ~~power~~ hack and complexity of **Package Manager** in Zig
 
 ---
 
@@ -246,7 +246,7 @@ You'll see the word `artifact` used often in the build process. One way to grasp
 
 When you have the `artifact` in the code (`build.zig`), you can then use the `artifact` *object* to pass in to other function calls that can *extract* parts of the artifact based on their individual need. For example, `installLibraryHeaders()` would take in the `artifact` *object* and install any header files installed as part of the `artifact`.
 
-In fact, this is something we will and we have to take advantage of in order to make our <u>hack</u> build work.
+In fact, this is something we will and we have to take advantage of in order to make our ~~hack~~ build work.
 
 In the code below, the executable `.name = "my-wtf-project` tells the build that *my-wtf-project* is the name of the `artifact` and the executable is the actual `artifact`. 
 
@@ -372,7 +372,7 @@ Our own artifact is now named `duck` by calling `Build.addStaticLibrary()` with 
 
 Although we call `linkLibrary(duck_dep.artifact("duckdb"))`, the empty library created in `libduckdb` A doesn't actually resolve anything symbols because all the symbols are really in the dynamic library `libduckdb.so`.
 
-The most important part of the <u>hack</u> build is to call to `installLibraryHeaders()` because we want to once again include the output of the `libduckdb` `artifact` in our own `artifact` so that anything that depends on `duckdb.zig` would have access to both the `duckdb.h` and `libduckdb.so` from A.
+The most important part of the ~~hack~~ build is to call to `installLibraryHeaders()` because we want to once again include the output of the `libduckdb` `artifact` in our own `artifact` so that anything that depends on `duckdb.zig` would have access to both the `duckdb.h` and `libduckdb.so` from A.
 
 ```zig
 const std = @import("std");
@@ -452,7 +452,7 @@ Notice that we do not need to refer to A ([libduckdb](https://github.com/beachgl
 
 This is somewhat similar to the `build.zig` of B ([duckdb.zig](https://github.com/beachglasslabs/duckdb.zig)).
 
-Although we never referred to A ([libduckdb](https://github.com/beachglasslabs/libduckdb)) at all in `build.zig.zon`, we do need to refer to the artifact of "duck" and install `libduckdb.so` from A ([libduckdb](https://github.com/beachglasslabs/libduckdb)) using the same <u>hack</u> call `installLibraryHeaders(duck.artifact("duck"))`. However, We now refer to the library header as part of the `artifact` of B ([duckdb.zig](https://github.com/beachglasslabs/duckdb.zig)), not that of A ([libduckdb](https://github.com/beachglasslabs/libduckdb)).
+Although we never referred to A ([libduckdb](https://github.com/beachglasslabs/libduckdb)) at all in `build.zig.zon`, we do need to refer to the artifact of "duck" and install `libduckdb.so` from A ([libduckdb](https://github.com/beachglasslabs/libduckdb)) using the same ~~hack~~ call `installLibraryHeaders(duck.artifact("duck"))`. However, We now refer to the library header as part of the `artifact` of B ([duckdb.zig](https://github.com/beachglasslabs/duckdb.zig)), not that of A ([libduckdb](https://github.com/beachglasslabs/libduckdb)).
 
 We also have to link to the library provided by B ([duckdb.zig](https://github.com/beachglasslabs/duckdb.zig)) because it actually includes the **Zig** wrapper functions we need in our code by calling `linkLibrary(duck.artifact("duck"))`.
 
