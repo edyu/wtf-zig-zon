@@ -92,9 +92,11 @@ There are several things of note here in the code above:
 
 1. The *object* looking curly braces are actually *anonymous* `struct`s, if you don't know what `struct`s are, you can think them as like an object. I briefly talked about `struct`s in my previous article: [Zig Union(Enum)](https://zig.news/edyu/zig-unionenum-wtf-is-switchunionenum-2e02).
 
-2. The `.` in front of the curly braces are important as it denotes the `struct` as an *anonymous* `struct`. The reason it's called *anonymous* because you don't need to specify the name or the type because it's defined a priori. In other words, the type of the `struct` is based upon the context. In this case, the parser that's reading and reifying the `struct` will expect a particular structure of the `struct` to include certain fields.
+2. The `.` in front of the curly braces are important as it denotes the `struct` as an *anonymous* `struct`.
+> "For the purpose of `zon`, you can think of *anonymous* `struct` as a similar data format to `json`, but instead using **Zig**'s struct literal syntax."
+> -- [@InKryption](https://github.com/inkryption).
 
-3. The `.` in front of field names are also important because it conforms to the expected structure. In this particular `struct`, there is an expectation of three top level fields of `name`, `version`, and `dependencies` respectively.
+3. The `.` in front of field names are also important because it conforms to the expected structure. In this particular *anonymous* `struct`, there is an expectation of three top level fields of `name`, `version`, and `dependencies` respectively.
 
 ## dependencies
 
