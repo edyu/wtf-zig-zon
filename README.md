@@ -541,4 +541,6 @@ rm -rf ~/.cache/zig/*
 
 You can find the code [here](https://github.com/edyu/wtf-zig-zon).
 
+Here are the code for [duckdb.zig](https://github.com/beachglasslabs/duckdb.zig) and [libduckdb](https://github.com/beachglasslabs/libduckdb).
+
 ## ![Zig Logo](https://ziglang.org/zero.svg)
