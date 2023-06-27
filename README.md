@@ -543,4 +543,6 @@ You can find the code [here](https://github.com/edyu/wtf-zig-zon).
 
 Here are the code for [duckdb.zig](https://github.com/beachglasslabs/duckdb.zig) and [libduckdb](https://github.com/beachglasslabs/libduckdb).
 
+Special thanks to [@InKryption](https://github.com/inkryption) for helping out on package manager questions!
+
 ## ![Zig Logo](https://ziglang.org/zero.svg)
