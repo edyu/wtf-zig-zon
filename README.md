@@ -16,17 +16,17 @@ Jun.27.2023
 
 [**Zig**](https://ziglang.org) is a modern system programming language and although it claims to a be a **better C**, many people who initially didn't need system programming were attracted to it due to the simplicity of its syntax compared to alternatives such as **C++** or **Rust**.
 
-However, due to the power of the language, some of the syntax are not obvious for those first coming into the language. I was actually one such person.
+However, due to the power of the language, some of the syntaxes are not obvious for those first coming into the language. I was actually one such person.
 
-Today we will take a break from the language itself to talk about one of the most important new features that was introduced recently in **Zig** -- the *package manager*. I've read somewhere that all modern langauge need to have package manager built in. Although I don't share the same opinion, it's indicative of how important a good package manager is for the the underlying language. For example, **Javascript** has `npm`, [**Haskell**](https://www.haskell.org) has [`cabal`](https://haskell.org/cabal/), and **Rust** has [`cargo`](https://doc.rust-lang.com/cargo/).
+Today we will take a break from the language itself to talk about one of the most important new features that was introduced recently in **Zig** -- the package manager. I've read somewhere that all modern languages need to have package manager built in. Although I don't share the same opinion, it's indicative of how important a good package manager is for the underlying language. For example, **JavaScript** has [`npm`](https://npmjs.com), [**Haskell**](https://www.haskell.org) has [`cabal`](https://haskell.org/cabal/), and **Rust** has [`cargo`](https://doc.rust-lang.com/cargo/).
 
 ## Disclaimer
 
-There is a reason why I changed my typical subtitle of *power and complexity* to *hack and complexity* for this particular article because unfortunately the **Zig** *Package Manager* is currently only on the *master* branch (or edge) and its a work-in-progress until `0.11` is released. As for the **hack** part, it will make sense after you read through the part of [Provide a Package](#provide-a-package).
+There is a reason why I changed my typical subtitle of *power and complexity* to *hack and complexity* for this particular article because unfortunately the **Zig** package manager is currently only on the *master* branch (or edge) and its a work-in-progress until `0.11` is released. As for the **hack** part, it will make sense after you read through the part of [Provide a Package](#provide-a-package).
 
-The state of the release `0.11` as of June 2023 is in flux so you will encounter many bugs and problems along the way. I'm not writing this to discourage you from using it but to set the right expetation so you don't throw away the *baby* (**Zig**) with the *bath water* (*package manager*).
+The state of the release `0.11` as of June 2023 is in flux so you will encounter many bugs and problems along the way. I'm not writing this to discourage you from using it but to set the right expectation, so you don't throw away the *baby* (**Zig**) with the *bath water* (package manager).
 
-**Zig** along with its *package manager* is being constantly improved and honestly it's already very useful and usable even in the current state (despite the frustrations along with one of the **hackest** things I've done, which I will describe later in the article).
+**Zig** along with its package manager is being constantly improved, and honestly, it's already very useful and usable even in the current state (despite the frustrations along with one of the **hackiest** things I've done, which I will describe later in the article).
 
 When you run `zig build`, you may see several failures (such as `segmentation fault`) when it's pulling down packages before it will succeed after several more tries. Although there is indication it's because of *TLS* but I don't want to give out wrong information that I haven't investigated myself.
 
@@ -45,22 +45,22 @@ fish: Job 1, 'zig build' terminated by signal SIGSEGV (Address boundary error)
 
 ## Package Manager
 
-So what's the purpose of the *package manager*? For a developer, the *package manager* is used to use other people's code easily. For example, say you need to use a new library, it's much easier to use the underlying *package manager* to add (either download and/or link to the library) the library and then somehow configure something in your project to *magically* link to the library for you to use it in your code.
+So, what's the purpose of the package manager? For a developer, the package manager is used to use other people's code easily. For example, say you need to use a new library, it's much easier to use the underlying package manager to add (either download and/or link to the library) the library and then somehow configure something in your project to *magically* link to the library for you to use it in your code.
 
 ## Zig Package Manager(s)
 
-**Zig** had some other *package managers* in the past but now we have a built-in *official package manager* as part of `version 0.11` (not released yet as of July, 2023).
+**Zig** had some other package managers in the past but now we have a built-in *official* package manager as part of `version 0.11` (not released yet as of July, 2023).
 
-Interestingly, there are no additional commands to remember as the *package manager* is built into the language. **Zig** also does not have a global repository or a website that hosts the global repository such as [npmjs](https://npmjs.com) does for *Javascript* or [crates.io](https://crates.io) for **Rust**.
+Interestingly, there are no additional commands to remember as the package manager is built into the language. **Zig** also does not have a global repository or a website that hosts the global repository such as [npmjs](https://npmjs.com) does for *JavaScript* or [crates.io](https://crates.io) for **Rust**.
 
-So really, the **Zig** *Package Manager* is just same old `zig build` that you need to build your project anyways. There is nothing new you really need to use the *package manager*.
+So really, the **Zig** package manager is just same old `zig build` that you need to build your project anyways. There is nothing new you really need to use the package manager.
 
 There is however a new file-type with the extension `.zon` and a new file called `build.zig.zon`. `zon` stands for **Zig** Object Notation similar to how `json` stands for **JavaScript** Object Notation. It's mainly a way to describe hierarchical relationship such as dependencies needed in the project.
 
-In order to use a **Zig** package using the *Package Manager*, you'll need to do 3 things:
-1. Add your dependencies in `build.zig.zon`
-2. Incorporate your dependencies to your build process in `build.zig`
-3. Import your dependencies in your code using `@import`
+In order to use a **Zig** package using the package manager, you'll need to do 3 things:
+1. Add your dependencies in `build.zig.zon`.
+2. Incorporate your dependencies to your build process in `build.zig`.
+3. Import your dependencies in your code using `@import`.
 
 ## build.zig.zon
 
@@ -100,11 +100,11 @@ There are several things of note here in the code above:
 
 ## dependencies
 
-To use a package that's been prepared for the new Zig Package Manager, you just need to list it in the `dependencies` section.
+To use a package that's been prepared for the new **Zig** package manager, you just need to list it in the `dependencies` section.
 
 In the previous example, I showed how to add [*Zap*](https://github.com/zigzap/zap), a webserver, to your project by listing both the `url` of the release and the `hash`.
 
-The `url` is fairly easy to find as you can normally find it on [github](https://github.com/zigzap/zap/releases) directly.
+The `url` is fairly easy to find as you can normally find it on [GitHub](https://github.com/zigzap/zap/releases) directly.
 
 However, the `hash` is difficult to find out because it's not just the `md5sum`, `sha1sum`, or even `sha256sum` of the tarball listed in `url`. The `hash` does use *sha256* but it's not a direct hash of the tarball so it's not easily calculated by the user of the package.
 
@@ -203,7 +203,7 @@ pub fn main() !void {
 
 ## Provide a Package
 
-Ok, this is for those who would like to understand how the **Zig** *package manager* works as a library/package provider.
+Ok, this is for those who would like to understand how the **Zig** package manager works as a library/package provider.
 
 To better illustrate things, I'll use a new package [`duckdb.zig`](https://github.com/beachglasslabs/duckdb.zig) that I wrote.
 
@@ -222,8 +222,8 @@ I unzipped the package and placed `duckdb.h` under `include` directory and `libd
 
 Here are the first 3 hacks needed: 
 
-1. You don't need to build anything but the package manager expects to see a `build.zig` file in the package so you must provide one.
-2. Because you provided a `build.zig`, you need to provide some build artifact even if it's not needed
+1. You don't need to build anything, but the package manager expects to see a `build.zig` file in the package so you must provide one.
+2. Because you provided a `build.zig`, you need to provide some build artifact even if it's not needed.
 3. The most important part and the **hackiest** part is that you need to use the constructs used for header files to install the library.
 
 ## build.zig.zon of A: [libduckdb](https://github.com/beachglasslabs/libduckdb).
@@ -531,7 +531,7 @@ Leaks detected: false
 
 ## Bonus: Cache
 
-When the **Zig** Package Manager pulls down the packages, it saves them under `.cache/zig`. What it means is that once you have pulled down a package, you don't need network to pull down the same package again. However, there are times where the **Zig** Package Manager doesn't update/work properly, you'll need to delete the cache specific to your package and tell **Zig** to re-download the package.
+When the **Zig** package manager pulls down the packages, it saves them under `.cache/zig`. What it means is that once you have pulled down a package, you don't need network to pull down the same package again. However, there are times where the **Zig** package manager doesn't update/work properly, you'll need to delete the cache specific to your package and tell **Zig** to re-download the package.
 
 The following command will remove all the packages from your cache:
 
