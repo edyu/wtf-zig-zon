@@ -129,12 +129,17 @@ Once you add your `dependencies`, `zig buid` would pull down your dependent pack
 
 But you may need to add the package in your build step as well. **Zig** is different in many languages that it minimizes a runtime so often you'll need to build and link your `dependencies` in your project.
 
+# Module
+
+In order to use the library exposed as a dependency, you have to expose the module of the dependency and add the module to the compile step.
+
+You can think of a module as the code that are exported by the library so that the caller of the package can import the library into the source code.
+
+In the next section, the code adds a module using a call to `addModule()`. The first argument is the name you want to use in your code so you can `import` the module. The second argument is where the code is located within the module in the dependency. In other words, you are aliasing a namespace (the 2nd argument) to a new name (1st argument).
+
 # build.zig
 
-**Zig** expects the dependencies as a `module` in order to pull in the package as part of the build process. In the `build.zig` of the `zap` module, it will list itself as a module with the name `zap`.
-
-
-Here is an example of the `build.zig` how to include the `zap` project in your build:
+Here is an example of the `build.zig` illustrating how to add the module `duck` in your project so that you can subsequently use the library by importing `const duck = @import("duck");`:
 
 ```zig
 const std = @import("std");
