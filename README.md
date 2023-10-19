@@ -22,13 +22,15 @@ Today we will take a break from the language itself to talk about one of the mos
 
 ## Disclaimer
 
-There is a reason why I changed my typical subtitle of *power and complexity* to *hack and complexity* for this particular article because unfortunately the **Zig** package manager is currently only on the *master* branch (or edge) and its a work-in-progress until `0.11` is released. As for the **hack** part, it will make sense after you read through the part of [Provide a Package](#provide-a-package).
+I've added a follow-up article [WTF is Zig Package Manager 2](https://zig.news/edyu/zig-package-manager-wtf-is-zon-2-0110-update-1jo3). It goes over a better hack to make the package manager to work for my need.
 
-The state of the release `0.11` as of June 2023 is in flux so you will encounter many bugs and problems along the way. I'm not writing this to discourage you from using it but to set the right expectation, so you don't throw away the *baby* (**Zig**) with the *bath water* (package manager).
+There is a reason why I changed my typical subtitle of _power and complexity_ to _hack and complexity_ for this particular article because unfortunately the **Zig** package manager is currently only on the _master_ branch (or edge) and its a work-in-progress until `0.11` is released. As for the **hack** part, it will make sense after you read through the part of [Provide a Package](#provide-a-package).
+
+The state of the release `0.11` as of June 2023 is in flux so you will encounter many bugs and problems along the way. I'm not writing this to discourage you from using it but to set the right expectation, so you don't throw away the _baby_ (**Zig**) with the _bath water_ (package manager).
 
 **Zig** along with its package manager is being constantly improved, and honestly, it's already very useful and usable even in the current state (despite the frustrations along with one of the **hackiest** things I've done, which I will describe later in the article).
 
-When you run `zig build`, you may see several failures (such as `segmentation fault`) when it's pulling down packages before it will succeed after several more tries. Although there is indication it's because of *TLS* but I don't want to give out wrong information that I haven't investigated myself.
+When you run `zig build`, you may see several failures (such as `segmentation fault`) when it's pulling down packages before it will succeed after several more tries. Although there is indication it's because of _TLS_ but I don't want to give out wrong information that I haven't investigated myself.
 
 ```fish
 ~/w/z/my-wtf-project main• ❱ zig build
@@ -45,19 +47,20 @@ fish: Job 1, 'zig build' terminated by signal SIGSEGV (Address boundary error)
 
 ## Package Manager
 
-So, what's the purpose of the package manager? For a developer, the package manager is used to use other people's code easily. For example, say you need to use a new library, it's much easier to use the underlying package manager to add (either download and/or link to the library) the library and then somehow configure something in your project to *magically* link to the library for you to use it in your code.
+So, what's the purpose of the package manager? For a developer, the package manager is used to use other people's code easily. For example, say you need to use a new library, it's much easier to use the underlying package manager to add (either download and/or link to the library) the library and then somehow configure something in your project to _magically_ link to the library for you to use it in your code.
 
 ## Zig Package Manager(s)
 
-**Zig** had some other package managers in the past but now we have a built-in *official* package manager as part of `version 0.11` (not released yet as of July, 2023).
+**Zig** had some other package managers in the past but now we have a built-in _official_ package manager as part of `version 0.11` (not released yet as of July, 2023).
 
-Interestingly, there are no additional commands to remember as the package manager is built into the language. **Zig** also does not have a global repository or a website that hosts the global repository such as [npmjs](https://npmjs.com) does for *JavaScript* or [crates.io](https://crates.io) for **Rust**.
+Interestingly, there are no additional commands to remember as the package manager is built into the language. **Zig** also does not have a global repository or a website that hosts the global repository such as [npmjs](https://npmjs.com) does for _JavaScript_ or [crates.io](https://crates.io) for **Rust**.
 
 So really, the **Zig** package manager is just same old `zig build` that you need to build your project anyways. There is nothing new you really need to use the package manager.
 
 There is however a new file-type with the extension `.zon` and a new file called `build.zig.zon`. `zon` stands for **Zig** Object Notation similar to how `json` stands for **JavaScript** Object Notation. It's mainly a way to describe hierarchical relationship such as dependencies needed in the project.
 
 In order to use a **Zig** package using the package manager, you'll need to do 3 things:
+
 1. Add your dependencies in `build.zig.zon`.
 2. Incorporate your dependencies to your build process in `build.zig`.
 3. Import your dependencies in your code using `@import`.
@@ -75,7 +78,7 @@ If you open up a `zon` file such as the following, you'll notice, it looks like 
     // the version of your project
     .version = "0.0.1",
 
-    // the actual packages you need as dependencies of your project 
+    // the actual packages you need as dependencies of your project
     .dependencies = .{
         // the name of the package
         .zap = .{
@@ -90,25 +93,26 @@ If you open up a `zon` file such as the following, you'll notice, it looks like 
 
 There are several things of note here in the code above:
 
-1. The *object* looking curly braces are actually *anonymous* `struct`s, if you don't know what `struct`s are, you can think them as like an object. I briefly talked about `struct`s in my previous article: [Zig Union(Enum)](https://zig.news/edyu/zig-unionenum-wtf-is-switchunionenum-2e02).
+1. The _object_ looking curly braces are actually _anonymous_ `struct`s, if you don't know what `struct`s are, you can think them as like an object. I briefly talked about `struct`s in my previous article: [Zig Union(Enum)](https://zig.news/edyu/zig-unionenum-wtf-is-switchunionenum-2e02).
 
-2. The `.` in front of the curly braces are important as it denotes the `struct` as an *anonymous* `struct`.
-> "For the purpose of `zon`, you can think of *anonymous* `struct` as a similar data format to `json`, but instead using **Zig**'s struct literal syntax."
+2. The `.` in front of the curly braces are important as it denotes the `struct` as an _anonymous_ `struct`.
+
+> "For the purpose of `zon`, you can think of _anonymous_ `struct` as a similar data format to `json`, but instead using **Zig**'s struct literal syntax."
 > -- [@InKryption](https://github.com/inkryption).
 
-3. The `.` in front of field names are also important because it conforms to the expected structure. In this particular *anonymous* `struct`, there is an expectation of three top level fields of `name`, `version`, and `dependencies` respectively.
+3. The `.` in front of field names are also important because it conforms to the expected structure. In this particular _anonymous_ `struct`, there is an expectation of three top level fields of `name`, `version`, and `dependencies` respectively.
 
 ## dependencies
 
 To use a package that's been prepared for the new **Zig** package manager, you just need to list it in the `dependencies` section.
 
-In the previous example, I showed how to add [*Zap*](https://github.com/zigzap/zap), a webserver, to your project by listing both the `url` of the release and the `hash`.
+In the previous example, I showed how to add [_Zap_](https://github.com/zigzap/zap), a webserver, to your project by listing both the `url` of the release and the `hash`.
 
 The `url` is fairly easy to find as you can normally find it on [GitHub](https://github.com/zigzap/zap/releases) directly.
 
-However, the `hash` is difficult to find out because it's not just the `md5sum`, `sha1sum`, or even `sha256sum` of the tarball listed in `url`. The `hash` does use *sha256* but it's not a direct hash of the tarball so it's not easily calculated by the user of the package.
+However, the `hash` is difficult to find out because it's not just the `md5sum`, `sha1sum`, or even `sha256sum` of the tarball listed in `url`. The `hash` does use _sha256_ but it's not a direct hash of the tarball so it's not easily calculated by the user of the package.
 
-Luckily the easiest way I found is just to put any `hash` there initially and then `zig build` will complain and give you the correct hash. I know it's not ideal until all package author follows what [*Zap*](https://github.com/zigzap/zap) does by listing the `hash` in the [release notes](https://github.com/zigzap/zap/releases) or the README.
+Luckily the easiest way I found is just to put any `hash` there initially and then `zig build` will complain and give you the correct hash. I know it's not ideal until all package author follows what [_Zap_](https://github.com/zigzap/zap) does by listing the `hash` in the [release notes](https://github.com/zigzap/zap/releases) or the README.
 
 The `dependencies` section showing 2 packages:
 
@@ -166,7 +170,7 @@ pub fn build(b: *std.Build) !void {
         .target = target,
         .optimize = optimize,
     });
-    // duck has exported itself as duck 
+    // duck has exported itself as duck
     // now you are re-exporting duck
     // as a module in your project with the name duck
     exe.addModule("duck", duck.module("duck"));
@@ -183,7 +187,7 @@ pub fn build(b: *std.Build) !void {
 
 What the code snippet above does is that it first declares your project as an executable and then pulls in `duck` as a dependency.
 
-The `build.zig` in the `duck` project already *exported* itself as the module `duck` but you are adding it again as a module with the same name `duck`.
+The `build.zig` in the `duck` project already _exported_ itself as the module `duck` but you are adding it again as a module with the same name `duck`.
 
 The `linkLibrary` call is the actual call to link to the output (**Zig** calls it `artifact`) of the `duck` module.
 
@@ -213,25 +217,25 @@ Ok, this is for those who would like to understand how the **Zig** package manag
 To better illustrate things, I'll use a new package [`duckdb.zig`](https://github.com/beachglasslabs/duckdb.zig) that I wrote.
 
 [DuckDb](https://duckdb.org/) is a column-based SQL database so think it as basically a column-based [SQLite](https://www.sqlite.org/index.html).
-I will split the project into 3 packages A, B, and C. Basically the idea is that our project will be C that is the actual project that uses *DuckDb*. The project C will then use the **Zig** layer provided by package B, which in turn will need the actual *DuckDb* libraries in package A. 
+I will split the project into 3 packages A, B, and C. Basically the idea is that our project will be C that is the actual project that uses _DuckDb_. The project C will then use the **Zig** layer provided by package B, which in turn will need the actual _DuckDb_ libraries in package A.
 
-So in our case, we have the project *my-wtf-project*, which will call the **Zig** library provided by [duckdb.zig](https://github.com/beachglasslabs/duckdb.zig). The [duckdb.zig](https://github.com/beachglasslabs/duckdb.zig) is really a wrapper of [libduckdb](https://github.com/beachglasslabs/libduckdb) that provides the dynamic library of [release 0.8.1](https://github.com/duckdb/duckdb/releases/tag/v0.8.1) of [DuckDb](https://duckdb.org). To use the A, B, C in the previous paragraph, C is our project *my-wtf-project*, B is [duckdb.zig](https://github.com/beachglasslabs/duckdb.zig), and A is [libduckdb](https://github.com/beachglasslabs/libduckdb).
+So in our case, we have the project _my-wtf-project_, which will call the **Zig** library provided by [duckdb.zig](https://github.com/beachglasslabs/duckdb.zig). The [duckdb.zig](https://github.com/beachglasslabs/duckdb.zig) is really a wrapper of [libduckdb](https://github.com/beachglasslabs/libduckdb) that provides the dynamic library of [release 0.8.1](https://github.com/duckdb/duckdb/releases/tag/v0.8.1) of [DuckDb](https://duckdb.org). To use the A, B, C in the previous paragraph, C is our project _my-wtf-project_, B is [duckdb.zig](https://github.com/beachglasslabs/duckdb.zig), and A is [libduckdb](https://github.com/beachglasslabs/libduckdb).
 
 Note: I will talk about the actual process of making a wrapper library in a future article.
 
 ## A: [libduckdb](https://github.com/beachglasslabs/libduckdb)
 
-The *duckdb* is written in c++ and the `libduckdb-linux-amd64` release from *duckdb* only provided 3 files: `duckdb.h`, `duckdb.hpp`, and `libduckdb.so`.
+The _duckdb_ is written in c++ and the `libduckdb-linux-amd64` release from _duckdb_ only provided 3 files: `duckdb.h`, `duckdb.hpp`, and `libduckdb.so`.
 
 I unzipped the package and placed `duckdb.h` under `include` directory and `libduckdb.so` under `lib` directory.
 
-Here are the first 3 hacks needed: 
+Here are the first 3 hacks needed:
 
 1. You don't need to build anything, but the package manager expects to see a `build.zig` file in the package so you must provide one.
 2. Because you provided a `build.zig`, you need to provide some build artifact even if it's not needed.
 3. The most important part and the **hackiest** part is that you need to use the constructs used for header files to install the library.
 
-## build.zig.zon of A: [libduckdb](https://github.com/beachglasslabs/libduckdb).
+## build.zig.zon of A: [libduckdb](https://github.com/beachglasslabs/libduckdb)
 
 This is probably the simplest `build.zig.zon` as you don't need any dependencies.
 
@@ -251,11 +255,11 @@ This should remind people of a very simple `.cabal`, `cargo.toml`, or `package.j
 
 You'll see the word `artifact` used often in the build process. One way to grasp `artifact` is to think it as the output of the build. If you are building a shared library, the `.so` file is the `artifact`; a static library, the `.a` file is the `artifact`; and for an executable, the actual execuable is the `artifact`.
 
-When you have the `artifact` in the code (`build.zig`), you can then use the `artifact` *object* to pass in to other function calls that can *extract* parts of the artifact based on their individual need. For example, `installLibraryHeaders()` would take in the `artifact` *object* and install any header files installed as part of the `artifact`.
+When you have the `artifact` in the code (`build.zig`), you can then use the `artifact` _object_ to pass in to other function calls that can _extract_ parts of the artifact based on their individual need. For example, `installLibraryHeaders()` would take in the `artifact` _object_ and install any header files installed as part of the `artifact`.
 
 In fact, this is something we will and we have to take advantage of in order to make our ~~hack~~ build work.
 
-In the code below, the executable `.name = "my-wtf-project` tells the build that *my-wtf-project* is the name of the `artifact` and the executable is the actual `artifact`. 
+In the code below, the executable `.name = "my-wtf-project` tells the build that _my-wtf-project_ is the name of the `artifact` and the executable is the actual `artifact`.
 
 ```zig
 pub fn build(b: *std.Build) !void {
@@ -276,9 +280,9 @@ pub fn build(b: *std.Build) !void {
 
 ```
 
-## build.zig of A: [libduckdb](https://github.com/beachglasslabs/libduckdb).
+## build.zig of A: [libduckdb](https://github.com/beachglasslabs/libduckdb)
 
-We are essentially building something we don't really need but we definitely need the `installHeader` calls because this is how we *install* the 2 files we need in our `artifact`: `include/duckdb.h` and `lib/libduckdb.so`.
+We are essentially building something we don't really need but we definitely need the `installHeader` calls because this is how we _install_ the 2 files we need in our `artifact`: `include/duckdb.h` and `lib/libduckdb.so`.
 
 Note that we are building a library without specifying a source code anywhere. We however do need to at least link to something. In this case, we need to link to the `libduckdb.so` even though we don't need any symbols from it because the build process needs either a source file or a library to link to.
 
@@ -340,7 +344,7 @@ pub fn build(b: *std.Build) !void {
 
 ## B: [duckdb.zig](https://github.com/beachglasslabs/duckdb.zig)
 
-The [duckdb.zig](https://github.com/beachglasslabs/duckdb.zig) is a minimal (for now) **Zig** wrapper to *duckdb*. The idea is so that any **Zig** project depending on it doesn't have to deal with the **C/C++** API just the **Zig** equivalent.
+The [duckdb.zig](https://github.com/beachglasslabs/duckdb.zig) is a minimal (for now) **Zig** wrapper to _duckdb_. The idea is so that any **Zig** project depending on it doesn't have to deal with the **C/C++** API just the **Zig** equivalent.
 
 We still need to perpetuate the **hack** by making sure `libduckdb.so` is part of the output `artifact` of [duckdb.zig](https://github.com/beachglasslabs/duckdb.zig) as well.
 
@@ -375,7 +379,7 @@ We now need to refer to the `libduckdb` (A) package using the name `duckdb` by m
 
 We then name our module `duck` and add the module to `Build` with such name so that the build process can get the module by name if needed.
 
-Our own artifact is now named `duck` by calling `Build.addStaticLibrary()` with `.name = "duck"` in the *anonymous* `struct`.
+Our own artifact is now named `duck` by calling `Build.addStaticLibrary()` with `.name = "duck"` in the _anonymous_ `struct`.
 
 Although we call `linkLibrary(duck_dep.artifact("duckdb"))`, the empty library created in `libduckdb` A doesn't actually resolve anything symbols because all the symbols are really in the dynamic library `libduckdb.so`.
 
@@ -471,7 +475,6 @@ Due to the latest change in **Zig**, we also now need to tell the build that `li
 
 Afterwards, we just install the executable by calling 'Build.installArtifact()', which would install the executable to `zig-out/bin` just like how **Zig** normally does. Note that our artifact for our project is called "my-wtf-project" because we put that name in `.name` during our call to `Build.addExecutable`.
 
-
 ```zig
 const std = @import("std");
 
@@ -518,7 +521,7 @@ pub fn build(b: *std.Build) !void {
 ## Running the executable
 
 Note that in order to run our executable, we need to tell it where to find `libduckdb.so`.
- 
+
 The easiest way I found is to invoke our exectable like `LID_LIBRARY_PATH=zig-out/lib my-wtf-project`.
 
 ```fish
@@ -545,6 +548,8 @@ rm -rf ~/.cache/zig/*
 ```
 
 ## The End
+
+There is a follow-up article [WTF is Zig Package Manager 2](https://zig.news/edyu/zig-package-manager-wtf-is-zon-2-0110-update-1jo3).
 
 You can find the code [here](https://github.com/edyu/wtf-zig-zon).
 
