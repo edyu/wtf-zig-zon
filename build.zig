@@ -34,7 +34,7 @@ pub fn build(b: *std.Build) !void {
 
     const path = try std.fmt.allocPrint(b.allocator, "{s}/lib", .{b.install_prefix});
     defer b.allocator.free(path);
-    exe.addLibraryPath(path);
+    exe.addLibraryPath(.{ .path = path });
     exe.linkSystemLibraryName("duckdb");
     exe.linkLibC();
 

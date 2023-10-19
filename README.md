@@ -123,8 +123,8 @@ The `dependencies` section showing 2 packages:
             .hash = "1220002d24d73672fe8b1e39717c0671598acc8ec27b8af2e1caf623a4fd0ce0d1bd",
         },
         .duck = .{
-            .url = "https://github.com/beachglasslabs/duckdb.zig/archive/refs/tags/v0.0.1.tar.gz",
-            .hash = "12207c44a5bc996bb969915a5091ca9b70e5bb0f9806827f2e3dd210c946e346a05e",
+            .url = "https://github.com/beachglasslabs/zig-duckdb/archive/refs/tags/v0.0.3.tar.gz",
+            .hash = "122024472fd43bf427dab4b9b4ff36807ea12914b7757923b562c5bfe42f1fa575c7",
         }
     }
 ```
@@ -327,7 +327,7 @@ pub fn build(b: *std.Build) !void {
     lib.addIncludePath("include");
     // point to the library path so we can find the system library
     // we need this to find the libduckdb.so
-    lib.addLibraryPath("lib");
+    lib.addLibraryPath(.{ .path = "lib" });
     // this means to link to libduckdb.so in the lib directory
     // the call will prepend 'lib' and append '.so'
     lib.linkSystemLibraryName("duckdb");
@@ -506,7 +506,7 @@ pub fn build(b: *std.Build) !void {
     const path = try std.fmt.allocPrint(b.allocator, "{s}/lib", .{b.install_prefix});
     defer b.allocator.free(path);
     // we need to somehow refer to the location of the libduckdb.so
-    exe.addLibraryPath(path);
+    exe.addLibraryPath(.{ .path = path });
     exe.linkSystemLibraryName("duckdb");
     // libduckdb requires libC
     exe.linkLibC();
